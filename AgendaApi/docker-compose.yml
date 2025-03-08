@@ -1,0 +1,48 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - DB_PASSWORD=admin # Esse valor deveria estar num vault ou em uma variavel de ambiente, não hardcoded, deixarei assim para simplificar
+      - DB_USER=admin
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  app:
+    build: .
+    ports:
+      - "5000:80"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    networks:
+      - app-network
+    environment:
+      - ConnectionStrings__DefaultConnection="Server=sqlserver;Database=AgendaDb;User Id=admin;Password=admin"
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+  rabbitmq-data:
