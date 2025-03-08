@@ -35,6 +35,12 @@ Esta é uma API desenvolvida com .NET 9 para gerenciar contatos em uma agenda. A
 - **Ter o .NET SDK configurado**
 - **Ter algum serviço docker instalado e rodando**
 
+Baixar o repositório através do seguinte comando:
+
+```
+git clone https://github.com/arielcintra/agenda-api.git
+```
+
 ### Passo 1: Rodar o docker compose
 
 ```
